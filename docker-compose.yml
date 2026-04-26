@@ -2,19 +2,22 @@ version: '3.8'
 
 services:
   n8n:
+    # Substituímos 'image' por 'build' para usar o seu Dockerfile personalizado
     build:
       context: .
       dockerfile: Dockerfile
-    image: n8n-ffmpeg
+    restart: unless-stopped
     ports:
-      - "5678:5678"
+      - '5678:5678'
     volumes:
-      - n8n_data:/home/node/.n8n
+      # Ajustado para o utilizador 'n8nuser' definido no Dockerfile
+      - ~/.n8n:/home/n8nuser/.n8n
     environment:
-      - N8N_BASIC_AUTH_ACTIVE=true
-      - N8N_BASIC_AUTH_USER=admin
-      - N8N_BASIC_AUTH_PASSWORD=123456
-      - TZ=America/Sao_Paulo
-
-volumes:
-  n8n_data:
+      - N8N_HOST=${SUBDOMAIN}.${DOMAIN}
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=https # Recomendado usar https se tiver domínio
+      - NODE_ENV=production
+      - WEBHOOK_URL=https://${SUBDOMAIN}.${DOMAIN}/
+      - GENERIC_TIMEZONE=America/Sao_Paulo
+      # Configuração para o n8n encontrar o Chromium instalado no Dockerfile
+      - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true
