@@ -1,23 +1,18 @@
-version: '3.8'
-
 services:
   n8n:
-    # Substituímos 'image' por 'build' para usar o seu Dockerfile personalizado
-    build:
-      context: .
-      dockerfile: Dockerfile
-    restart: unless-stopped
+    image: docker.n8n.io/n8nio/n8n
+    restart: always
     ports:
-      - '5678:5678'
-    volumes:
-      # Ajustado para o utilizador 'n8nuser' definido no Dockerfile
-      - ~/.n8n:/home/n8nuser/.n8n
+      - "5678:5678"
     environment:
-      - N8N_HOST=${SUBDOMAIN}.${DOMAIN}
+      - N8N_HOST=localhost
       - N8N_PORT=5678
-      - N8N_PROTOCOL=https # Recomendado usar https se tiver domínio
+      - N8N_PROTOCOL=http
       - NODE_ENV=production
-      - WEBHOOK_URL=https://${SUBDOMAIN}.${DOMAIN}/
-      - GENERIC_TIMEZONE=America/Sao_Paulo
-      # Configuração para o n8n encontrar o Chromium instalado no Dockerfile
-      - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true
+      - WEBHOOK_URL=http://localhost:5678/
+      - GENERIC_TIMEZONE=Europe/Berlin
+    volumes:
+      - n8n_data:/home/node/.n8n
+
+volumes:
+  n8n_data:
