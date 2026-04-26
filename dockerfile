@@ -1,27 +1,25 @@
-FROM n8nio/n8n:latest
+FROM node:20-alpine
 
-ARG N8N_VERSION
+ARG N8N_VERSION=latest
 
-RUN if [ -z "$N8N_VERSION" ] ; then echo "The N8N_VERSION argument is missing!" ; exit 1; fi
+RUN apk add --no-cache \
+    graphicsmagick \
+    tzdata \
+    git \
+    tini \
+    su-exec \
+    ffmpeg \
+    fontconfig \
+    msttcorefonts-installer \
+    python3 \
+    make \
+    g++ \
+    ca-certificates
 
-RUN apk add --update graphicsmagick tzdata git tini su-exec
+RUN update-ms-fonts && fc-cache -f
 
-USER root
-
-RUN apk --update add --virtual build-dependencies python3 build-base ca-certificates && \
-    npm config set python "$(which python3)" && \
-    npm_config_user=root npm install -g full-icu n8n@${N8N_VERSION} && \
-    apk del build-dependencies && \
-    rm -rf /root /tmp/* /var/cache/apk/* && mkdir /root
-
-RUN apk add --no-cache ffmpeg
-
-RUN apk --no-cache add --virtual fonts msttcorefonts-installer fontconfig && \
-    update-ms-fonts && \
-    fc-cache -f && \
-    apk del fonts && \
-    find /usr/share/fonts/truetype/msttcorefonts/ -type l -exec unlink {} \; && \
-    rm -rf /root /tmp/* /var/cache/apk/* && mkdir /root
+RUN npm config set python "$(which python3)" && \
+    npm install -g full-icu n8n@${N8N_VERSION}
 
 ENV NODE_ICU_DATA=/usr/local/lib/node_modules/full-icu
 
