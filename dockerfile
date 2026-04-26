@@ -1,4 +1,4 @@
-FROM node:20-alpine
+FROM n8nio/n8n:latest
 
 USER root
 
@@ -10,10 +10,4 @@ RUN apk add --no-cache \
     curl \
     git
 
-RUN npm install -g n8n
-
-RUN mkdir -p /home/node/.n8n && chown -R node:node /home/node
-
 USER node
-
-CMD ["n8n"]
