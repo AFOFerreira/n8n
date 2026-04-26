@@ -18,14 +18,12 @@ RUN apk add --no-cache \
 
 RUN update-ms-fonts && fc-cache -f
 
-RUN npm config set python "$(which python3)" && \
-    npm install -g full-icu n8n@${N8N_VERSION}
-
+ENV PYTHON=/usr/bin/python3
 ENV NODE_ICU_DATA=/usr/local/lib/node_modules/full-icu
+
+RUN npm install -g full-icu n8n@${N8N_VERSION}
 
 WORKDIR /data
 
-ENTRYPOINT ["tini", "--"]
-CMD ["n8n"]
-
 EXPOSE 5678
+CMD ["n8n"]
