@@ -1,29 +1,13 @@
-FROM node:20-alpine
+FROM n8nio/n8n:1.88.0
 
-ARG N8N_VERSION=latest
+USER root
 
 RUN apk add --no-cache \
-    graphicsmagick \
-    tzdata \
-    git \
-    tini \
-    su-exec \
     ffmpeg \
-    fontconfig \
-    msttcorefonts-installer \
-    python3 \
-    make \
-    g++ \
-    ca-certificates
+    graphicsmagick \
+    imagemagick \
+    bash \
+    curl \
+    git
 
-RUN update-ms-fonts && fc-cache -f
-
-ENV PYTHON=/usr/bin/python3
-ENV NODE_ICU_DATA=/usr/local/lib/node_modules/full-icu
-
-RUN npm install -g full-icu n8n@${N8N_VERSION}
-
-WORKDIR /data
-
-EXPOSE 5678
-CMD ["n8n"]
+USER node
